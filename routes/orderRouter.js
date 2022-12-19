@@ -2,9 +2,25 @@ const db = require("../db");
 const express = require("express");
 const router = express.Router();
 
+//mongoDB schemas
+// Require Mongoose
+const mongoose = require("mongoose");
+
+// Define a schema
+const Schema = mongoose.Schema;
+
+const OrderSchema = new Schema({
+  id: Number,
+  name: String,
+  price: Number,
+});
+// Compile model from schema
+const OrderModel = mongoose.model("OrderModel", OrderSchema);
+
 /* GET all orders */
 router.get("/all-orders", async function (req, res, next) {
-  res.json(db);
+  const orders = await OrderModel.find();
+  res.json(orders);
 });
 
 /* GET order by id */
@@ -30,6 +46,7 @@ router.post("/", async function (req, res, next) {
     name: req.body.name,
     price: req.body.price,
   };
+  OrderModel.create(order);
   db.push(order);
 
   res.json(order);
